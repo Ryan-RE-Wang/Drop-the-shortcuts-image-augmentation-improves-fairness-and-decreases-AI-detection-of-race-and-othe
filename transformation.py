@@ -123,8 +123,8 @@ def fish(img, distortion_coefficient):
     
     (w, h) = (256, 256)
     
-#     (center_x, center_y) = np.random.randint(48, 208, 2)
-    (center_x, center_y) = (208, 208)
+    (center_x, center_y) = np.random.randint(48, 208, 2)
+#     (center_x, center_y) = (208, 208)
 #     print(center_x, center_y)
     (center_x, center_y) = float((2*center_x-w)/w), float((2*center_y-h)/h)
 
