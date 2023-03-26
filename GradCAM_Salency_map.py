@@ -1,6 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import gc
+import os
+import pickle
 
 def make_gradcam_heatmap(img_array, last_conv_layer_model, classifier_model, target_class=None):
 
@@ -62,3 +66,66 @@ def show_heatmap(img_array, last_conv_layer_model, classifier_model, target_clas
     jet_heatmap = tf.keras.preprocessing.image.img_to_array(jet_heatmap)
     
     return ((jet_heatmap/255)*0.4+img_array)
+    
+def compute_smap(img_array, model, thresh, class_idx):
+    maps = []
+    imgs = []
+    prob = []
+    for img in img_array:
+
+        image = tf.reshape(img, [1, 224, 224])
+
+        with tf.GradientTape() as tape:
+            tape.watch(image)
+            pred = model(image, training=False)
+            loss = pred[0][class_idx]
+            
+        if (loss < thresh):
+            continue
+
+        grads = tape.gradient(loss, image)
+
+        dgrad_max_ = tf.math.abs(grads)
+
+        arr_min, arr_max  = np.min(dgrad_max_), np.max(dgrad_max_)
+        smap = (dgrad_max_ - arr_min) / (arr_max - arr_min + 1e-18)
+
+        maps.append(smap[0])
+        imgs.append(img)
+        prob.append(loss.numpy())
+                
+        gc.collect()
+        
+    idx = np.argsort(prob)[-int(len(prob)*0.2):]
+            
+    mean_img = sum_mean(np.array(imgs)[idx])
+    mean_map = sum_mean(np.array(maps)[idx])
+        
+    return mean_img, mean_map
+
+def show_save_img(mean_img, mean_map, label, model_name):
+
+    directory = 'imgs/{label}/'.format(label=label)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    plt.axis('off')
+
+#     plt.imshow(mean_img, cmap='gray')
+#     plt.imshow(mean_map, cmap='Reds', alpha=0.6)
+
+#     plt.savefig("imgs/{label}/{model_name}_{label}_saliency_map_top20.jpg".format(model_name=model_name, label=label), bbox_inches='tight', pad_inches = 0)
+#     plt.show()
+    
+    with open('imgs/{label}/mean_map_{model_name}_{label}'.format(model_name=model_name, label=label), "wb") as fp:
+        pickle.dump(mean_map, fp)
+
+    with open('imgs/{label}/mean_img_{model_name}_{label}'.format(model_name=model_name, label=label), "wb") as fp:
+        pickle.dump(mean_img, fp)
+
+def sum_mean(in_img):
+    in_img = np.sum(in_img, axis=0)
+    
+    arr_min, arr_max  = np.min(in_img), np.max(in_img)
+    return ((in_img - arr_min) / (arr_max - arr_min + 1e-18))
+    

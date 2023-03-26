@@ -9,11 +9,11 @@ def get_sobel_img(img):
     scale = 4
     delta = 0
     ddepth = cv.CV_16S
+    
+    img = img*255
 
     grad_x = cv.Sobel(img, ddepth, 1, 0, ksize=3, scale=scale, delta=delta, borderType=cv.BORDER_DEFAULT)
     grad_y = cv.Sobel(img, ddepth, 0, 1, ksize=3, scale=scale, delta=delta, borderType=cv.BORDER_DEFAULT)
-
-    print(gard_x)
     
     abs_grad_x = cv.convertScaleAbs(grad_x)
     abs_grad_y = cv.convertScaleAbs(grad_y)
@@ -121,13 +121,12 @@ def fish(img, distortion_coefficient):
 
     # floats for calcultions
     
-    (w, h) = (256, 256)
+    (w, h) = (224, 224)
     
-#     (center_x, center_y) = np.random.randint(48, 208, 2)
-    (center_x, center_y) = (208, 208)
+    (center_x, center_y) = np.random.randint(48, 208, 2)
+#     (center_x, center_y) = (208, 208)
 #     print(center_x, center_y)
     (center_x, center_y) = float((2*center_x-w)/w), float((2*center_y-h)/h)
-
     
     
     # easier calcultion if we traverse x, y in dst image
@@ -150,4 +149,4 @@ def fish(img, distortion_coefficient):
             if 0 <= xu and xu < img.shape[0] and 0 <= yu and yu < img.shape[1]:
                 dstimg[x][y] = img[xu][yu]
 
-    return dstimg.astype(np.uint8)
+    return dstimg
