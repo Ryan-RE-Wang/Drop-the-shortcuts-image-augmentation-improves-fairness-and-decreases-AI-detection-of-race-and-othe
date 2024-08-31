@@ -3,16 +3,6 @@
 ## Paper
 This work is published on eBiomedicine (https://www.thelancet.com/journals/ebiom/article/PIIS2352-3964(24)00082-3/fulltext.)
 
-If you find this work useful, we would appreciate you citing this paper.
-```
-@article{wang2022early,
-  title={Early Diagnosis of Chronic Obstructive Pulmonary Disease from Chest X-Rays using Transfer Learning and Fusion Strategies},
-  author={Wang, Ryan and Chen, Li-Ching and Moukheiber, Lama and Moukheiber, Mira and Moukheiber, Dana and Zaiman, Zach and Moukheiber, Sulaiman and Litchman, Tess and Seastedt, Kenneth and Trivedi, Hari and others},
-  journal={arXiv preprint arXiv:2211.06925},
-  year={2022}
-}
-```
-
 ## Background
 
 It has been shown that AI models can learn race on medical images, leading to algorithmic bias. Our aim in this study was to enhance the fairness of medical image models by eliminating bias related to race, age, and sex. We hypothesise models may be learning demographics via shortcut learning and combat this using image augmentation.
